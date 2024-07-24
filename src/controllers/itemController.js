@@ -3,10 +3,8 @@ import axios from "axios"
 
 const getItemDetails = async (req, res) => {
   try {
-    console.log("ola")
-    console.log("aooooooobna")
     const { id } = req.params;
-    console.log(id)
+
     const [itemResponse, descriptionResponse] = await Promise.all([
       axios.get(`https://api.mercadolibre.com/items/${id}`),
       axios.get(`https://api.mercadolibre.com/items/${id}/description`)

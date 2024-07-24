@@ -5,10 +5,9 @@ const searchItems = async (req, res) => {
     const query = req.query.q;
 
     const response = await axios.get(`https://api.mercadolibre.com/sites/MLA/search?q=${query}`);
-    // console.log(response)
     const { results, filters } = response.data;
     const categories = filters[0]?.values.map(value => value.name) || [];
-    console.log(response)
+
     const items = results.map(item => ({
       id: item.id,
       title: item.title,
