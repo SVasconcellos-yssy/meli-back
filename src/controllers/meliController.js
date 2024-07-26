@@ -22,7 +22,6 @@ router.get("/items/:id", async (req, res) => {
 // Endpoint para buscar itens
 router.get("/items", async (req, res) => {
   try {
-    console.log("aoba");
     const query = req.query.q;
     const results = await searchItems(query);
     res.json(results);
@@ -32,7 +31,7 @@ router.get("/items", async (req, res) => {
 });
 
 //buscar categoria
-router.get("/Item/category", async (req, res) =>{
+router.get("/Items/category/:id", async (req, res) =>{
   try{
     const id = req.params.id
     const results = await getItemCategory(id)

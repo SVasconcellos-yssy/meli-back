@@ -5,6 +5,11 @@ export async function getItem(id) {
     const response = await api.get(`/items/${id}`);
     const itemData = response.data;
     const description = await getItemDescription(id);
+    const existDescription =
+      description.plain_text.length > 0
+        ? description.plain_text
+        : "Não foi encontrado descrição para este item.";
+
 
     const data = {
       author: {
@@ -23,7 +28,7 @@ export async function getItem(id) {
         condition: itemData.condition,
         free_shipping: itemData.shipping.free_shipping,
         sold_quantity: itemData.sold_quantity,
-        description: description.plain_text,
+        description: existDescription
       },
     };
     return data;
@@ -45,6 +50,8 @@ export async function getItemDescription(id) {
 
 export async function searchItems(query) {
   try {
+
+
     let categoryAlternative;
     const response = await api.get(`/sites/MLA/search?q=${query}`);
 
@@ -81,10 +88,7 @@ export async function searchItems(query) {
         name: "Stephanye",
         lastname: "Vasconcellos",
       },
-      categories:
-        categories.length > 0
-          ? categories
-          : categoryAlternative.map((category) => category.name),
+      categories: categories.length > 0 ? categories : categoryAlternative,
       items: itemsResult,
     };
     return data;
@@ -94,45 +98,18 @@ export async function searchItems(query) {
   }
 }
 
-export async function getItemDetails(id) {
-  try {
-    const itemResponse = await getItem(id);
-    const descriptionResponse = await getItemDescription(id);
-
-    const data = {
-      author: {
-        name: "Stephanye",
-        lastname: "Vasconcellos",
-        item: {
-          id: itemResponse.id,
-          title: itemResponse.title,
-          price: {
-            currency: itemResponse.currency_id,
-            amout: Math.floor(itemResponse.price),
-            decimals: (item.pice % 1).toFixed(2).split(".")[1] || 0,
-          },
-          picture: itemResponse.thumbnail,
-          condition: itemResponse.condition,
-          free_shipping: itemResponse.shipping.free_shipping,
-          sold_quantity: itemResponse.sold_quantity,
-          description: descriptionResponse.plain_text,
-        },
-      },
-    };
-
-    return data;
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-}
-
 export async function getItemCategory(id) {
   try {
     const responseItem = await api.get(`/items/${id}`);
     const itemData = responseItem.data;
     const { category_id } = itemData;
     const responseCategory = await api.get(`/categories/${category_id}`);
-    return responseCategory.data.path_from_root;
+
+    const mapedCategory = responseCategory.data.path_from_root.map(
+      (category) => category.name
+    );
+
+    return mapedCategory;
   } catch (error) {
     console.error("Error searching categories:", error);
     throw error;
